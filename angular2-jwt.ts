@@ -1,5 +1,5 @@
-import {provide, Injectable} from '@angular/core';
-import {Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response} from '@angular/http';
+import {provide, Injectable} from 'angular2/core';
+import {Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response} from 'angular2/http';
 import {Observable} from 'rxjs/Observable';
 
 // Avoid TS error "cannot find name escape"
@@ -19,7 +19,7 @@ export interface IAuthConfig {
  */
 
 export class AuthConfig {
-  
+
   config: any;
   headerName: string;
   headerPrefix: string;
@@ -76,7 +76,7 @@ export class AuthHttp {
       obs.next(this._config.tokenGetter())
     });
   }
-  
+
   setGlobalHeaders(headers: Array<Object>, request: Request | RequestOptionsArgs) {
     headers.forEach((header: Object) => {
       let key: string = Object.keys(header)[0];
@@ -84,12 +84,12 @@ export class AuthHttp {
       request.headers.set(key, headerValue);
     });
   }
-  
+
   request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
 
     let request: any;
     let globalHeaders = this._config.globalHeaders;
-    
+
     if (!tokenNotExpired(null, this._config.tokenGetter())) {
       if (!this._config.noJwtError) {
         return new Observable((obs: any) => {
@@ -98,46 +98,46 @@ export class AuthHttp {
       } else {
         request = this.http.request(url, options);
       }
-      
+
     } else if (typeof url === 'string') {
       let reqOpts: RequestOptionsArgs = options || {};
-      
+
       if (!reqOpts.headers) {
         reqOpts.headers = new Headers();
       }
-      
+
       if (globalHeaders) {
         this.setGlobalHeaders(globalHeaders, reqOpts);
       }
-      
+
       reqOpts.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
       request = this.http.request(url, reqOpts);
-      
+
     } else {
       let req: Request = <Request>url;
-      
+
       if (!req.headers) {
         req.headers = new Headers();
       }
-      
+
       if (globalHeaders) {
         this.setGlobalHeaders(globalHeaders, req);
       }
-      
+
       req.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
       request = this.http.request(req);
     }
-    
+
     return request;
   }
 
   private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs) : Observable<Response> {
     let options: RequestOptions = new RequestOptions(requestArgs);
-    
+
     if (additionalOptions) {
       options = options.merge(additionalOptions)
     }
-    
+
     return this.request(new Request(options))
   }
 
@@ -246,7 +246,7 @@ export function tokenNotExpired(tokenName?:string, jwt?:string) {
   }
 
   var jwtHelper = new JwtHelper();
-  
+
   if(!token || jwtHelper.isTokenExpired(token, null)) {
     return false;
   }
